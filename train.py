@@ -1,3 +1,4 @@
+#%%writefile train.py # Uncomment to save as python file
 #!/usr/bin/env python
 # https://github.com/spro/char-rnn.pytorch
 
@@ -26,7 +27,8 @@ argparser.add_argument('--chunk_len', type=int, default=200)
 argparser.add_argument('--batch_size', type=int, default=100)
 argparser.add_argument('--shuffle', action='store_true')
 argparser.add_argument('--cuda', action='store_true')
-args = argparser.parse_args()
+#args = argparser.parse_args() # Uncomment if saving as python file
+args = argparser.parse_args(["shakespeare.txt", "--cuda"]) # ["shakespear.txt", "--cuda"] is added to make it possible to run in colab, comment if saving as python file
 
 if args.cuda:
     print("Using CUDA")
@@ -94,6 +96,7 @@ try:
     for epoch in tqdm(range(1, args.n_epochs + 1)):
         loss = train(*random_training_set(args.chunk_len, args.batch_size))
         loss_avg += loss
+        all_losses.append(loss)
 
         if epoch % args.print_every == 0:
             print('[%s (%d %d%%) %.4f]' % (time_since(start), epoch, epoch / args.n_epochs * 100, loss))
@@ -105,4 +108,3 @@ try:
 except KeyboardInterrupt:
     print("Saving before quit...")
     save()
-
